@@ -1,6 +1,6 @@
 ---
 title: "Project proposal"
-author: "Your name"
+author: "Abigail Kaurin"
 output: github_document
 ---
 
@@ -10,14 +10,58 @@ library(broom)
 ```
 
 ## 1. Introduction
+For my final project, I am going to research the biodiversity of plants and animals in New York State, with my primary focus on examining the differentiation of biodiversity among different NY counties and what factors promote them. I am an Environmental Science major, and this topic is something I enjoy learning about, and believe it will help me gain a better understanding of the balance of ecosystems as I move forward in my career. 
 
+  The data I will be using is the `biodiversity` dataset, which I obtained from `kaggle` (it was initially named `Biodiversity-by-County-Distribution-of-Animals-Plants-and-Natural-Communities` until I renamed it to `biodiversity` for convenience). It contains `20017` observations, and `12` variables. This dataset has observations based on which county the data was collected from, and variables based on `taxonomic group`, `scientific name`, `year last documented`, `NY listing status`, and more.
+
+
+Sources for my data:
+
+https://www.kaggle.com/datasets/jennlsmith/biodiversity-by-county?resource=download
+
+https://data.ny.gov/d/tk82-7km5
 
 
 ## 2. Data
+
+library(readr)
+biodiversity <- read_csv("/full/path/to/biodiversity.csv")
+# I have tried multiple ways to get this code to read but I just can't get it to work to display the 'glimpse' function to show the dataset.
+
 
 
 
 ## 3. Data analysis plan
 
+***My Outcome (Y) and Predictor (X) Variables:***
+For Outcome (Y): I will look into the biodiversity of the species that live there for each county.
+
+For Predictor (X): I will compare factors such as NY Listing Status, Federal Listing Status, State/Global conservation Rank, and Distribution Status.
+	
+***Comparison Groups:***
+For my comparison groups, I will be using NYS counties.
+	
+***Preliminary Exploratory Data Analysis (EDA):***
+
+Summary Statistics: For this part, I will use summary statistics such as mean and median to compare any meaningful data between counties.
+
+Visualizations: For visualizations, depending on what is the easiest to read, I will use histogram, scatter plots, boxplots, and other visualizations we learned this semester.
+
+***Methods for Analysis:***
+
+The main questions I want to explore for this dataset are: 
+
+What is the variation of biodiversity between NYS counties?
+Which regions promote the most biodiversity?
+Does the ecosystems provided by certain counties effect what species live there?
+Do certain counties promote an incline or decline in biodiversity?
+	
+To answer these, I will be using descriptive statistics.
+	
+***Results Needed to Support Hypothesized Answer:***
+	
+The results I would need are:
+
+Significant differences in biodiversity among NYS counties, key environmental factors driving variations in biodiversity and evidence of patterns of counties with similar biodiversity.
 
 
