@@ -1,6 +1,6 @@
 ---
-title: Project title
-author: by your name
+title: "Biodiversity is NY State Counties"
+author: "Abigail Kaurin"
 output: github_document
 ---
 
@@ -19,9 +19,151 @@ You can also load your data here and present any analysis results / plots, but I
 And make sure to hide your code with  `echo = FALSE` unless the point you are trying to make is about the code itself.
 Your results with proper output and graphics go in your presentation, this space is for a brief summary of your project.
 
+
 ```{r load-data, echo = FALSE}
 # load data here, if you like
+
+library(tidyverse)
+library(dplyr)
+library(datasets)
+library(readr)
+
+biodiversity <- read.csv("/cloud/project/data/biodiversity-by-county-distribution-of-animals-plants-and-natural-communities-1.csv")
+
 ```
+
+
+***This shows the distribution of biodiversity by county from highest to lowest.***
+
+```{r}
+library(dplyr)
+
+biodiversity_count <- biodiversity %>%
+  group_by(County) %>%
+  summarise(Unique_Species_Count = n_distinct(Scientific.Name))
+
+biodiversity_count <- biodiversity_count %>%
+  arrange(desc(Unique_Species_Count))
+
+print(biodiversity_count)
+```
+
+***Suffox, Essex, and Orange are the top three most diverse counties.***
+
+
+
+***This distribution shows biodiversity of counties from lowest bio diverse county to the highest:***
+
+```{r}
+
+library(dplyr)
+
+biodiversity_count <- biodiversity %>%
+  group_by(County) %>%
+  summarise(Unique_Species_Count = n_distinct(Scientific.Name))
+
+biodiversity_count <- biodiversity_count %>%
+  arrange(Unique_Species_Count)
+
+print(biodiversity_count)
+```
+
+
+***From here I will remove `Counties Unknown`, `not listed`,	`Lake Erie Open Waters`,	`Lake Ontario Open Waters`, `Atlantic Ocean`, and `Long Island Sound`, as they do not count as official counties:***
+
+```{r only counties}
+
+biodiversity_count <- biodiversity %>%
+  group_by(County) %>%
+  summarise(Unique_Species_Count = n_distinct(Scientific.Name))
+
+biodiversity_count <- biodiversity_count %>%
+  arrange(Unique_Species_Count)
+
+non_county_entries <- c("Counties Unknown", "not listed", "Lake Erie Open Waters", 
+                        "Lake Ontario Open Waters", "Atlantic Ocean and Long Island Sound")
+
+biodiversity_count <- biodiversity_count %>%
+  filter(!(County %in% non_county_entries))
+
+print(biodiversity_count)
+```
+
+***Based on this information, `New York`, `Montgomery`, and `Kings` counties rank with the lowest recorded biodiversity, with Houghton University's Allegany county not far behind them at the 7th lowest position.***
+
+
+Visualization of biodiversity distribution:
+
+```{r}
+
+library(ggplot2)
+
+biodiversity_count <- biodiversity %>%
+  group_by(County) %>%
+  summarise(Unique_Species_Count = n_distinct(Scientific.Name))
+
+biodiversity_count <- biodiversity_count %>%
+  arrange(Unique_Species_Count)
+
+
+ggplot(biodiversity_count, aes(x = reorder(County, Unique_Species_Count), y = Unique_Species_Count)) +
+  geom_histogram(stat = "identity", fill = "pink", width = 0.7) +
+  coord_flip() + 
+  labs(title = "Distribution of Biodiversity Across NYS Counties",
+       x = "County",
+       y = "Unique Species Count") +
+  theme_minimal()
+
+
+
+```
+
+***Based on this information, Suffox county contains the greatest variability of species by far compared to other counties.***
+
+
+```{r}
+endangered_species <- biodiversity %>%
+  filter(NY.Listing.Status == "Endangered" | 
+           Federal.Listing.Status == "Endangered" |
+           State.Conservation.Rank == "S1")
+
+endangered_count <- endangered_species %>%
+  group_by(County) %>%
+  summarise(Endangered_Species_Count = n_distinct(Scientific.Name))
+
+endangered_count <- endangered_count %>%
+  arrange(desc(Endangered_Species_Count))
+
+print(endangered_count)
+```
+
+***Based on this table, Suffolk, Richmond, and Nassau counties carry the most endangered species in NY. Interestingly Allegany county ranks 60th of counties with endangered species, carrying only 10.***
+
+
+***Here is a visualization of endangered species by county:***
+
+```{r endangered-by-county}
+
+
+endangered_count <- endangered_count %>%
+  arrange(desc(Endangered_Species_Count))
+
+
+ggplot(endangered_count, aes(x = reorder(County, Endangered_Species_Count), 
+                             y = Endangered_Species_Count)) +
+  geom_bar(stat = "identity", fill = "pink", width = 0.7) +
+  coord_flip() +  
+  labs(title = "Endangered Species by County",
+       x = "County",
+       y = "Number of Endangered Species") +
+  theme_minimal()
+
+
+```
+
+***This visualization gives a better idea of the distribution, and Suffolk appears to have more than double the amount of endangered species compared to other counties.***
+
+
 
 ## Presentation
 
