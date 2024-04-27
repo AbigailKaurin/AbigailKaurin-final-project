@@ -18,7 +18,7 @@ The next observation I wanted to make was to see which counties had the lowest d
 
 Lake Erie Open Waters, Lake Ontario Open Waters,  Atlantic Ocean and Long Island Sound were the areas with the lowest distribution. This information was not very useful to me, so I filtered out these variables as non-county-entries so that only actual counties would appear. After doing this, New York, Montgomery, and Kings counties showed the lowest biodiversity. New York and Kings are known to be very urban areas, which explains why there might be so little wildlife. Interestingly enough, Houghton Univetsity’s home Allegany County is in the 7th lowest position, which is odd as it is a very rural area.
 
-Finally, I wanted to create two visualizations on my findings. For the first one, I decided to create a bar graph that gave an accurate depiction of the biodiversity between counties. To make the histogram, I reused some of my previous code and labeled “unique species” for the x axis and “counties” for the y axis as this worked best. As you will see in both histograms, one major issue I had was that the names of the counties were bunching up, and I struggled to find any better fixes for this. But based on this visualization, it is clear that Suffolk County takes the lead with the most biodiversity by a long shot.
+Finally, I wanted to create two visualizations on my findings. For the first one, I decided to create a bar graph that gave an accurate depiction of the biodiversity between counties. To make the graph, I reused some of my previous code and labeled “unique species” for the x axis and “counties” for the y axis as this worked best. As you will see in both graphs, one major issue I had was that the names of the counties were bunching up, and I struggled to find any better fixes for this. But based on this visualization, it is clear that Suffolk County takes the lead with the most biodiversity by a long shot.
 
 For my second visualization, I wanted to explore which counties carried the most endangered species. Before I could do this, I created a table that filtered for endangered species from the “NYS Listing Status”, and the “Federal Listing Status”. Then, I grouped them by scientific name, and arranged them in descending order. Based on this table, Suffolk, Richmond, and Nassau counties carried the most endangered species. 
 
@@ -48,128 +48,6 @@ library(readr)
 biodiversity <- read.csv("/cloud/project/data/biodiversity-by-county-distribution-of-animals-plants-and-natural-communities-1.csv")
 
 
-```
-
-
-
-```{r}
-library(dplyr)
-
-biodiversity_count <- biodiversity %>%
-  group_by(County) %>%
-  summarise(Unique_Species_Count = n_distinct(Scientific.Name))
-
-biodiversity_count <- biodiversity_count %>%
-  arrange(desc(Unique_Species_Count))
-
-print(biodiversity_count)
-
-#This shows the distribution of biodiversity by county from highest to lowest.Suffolk, Essex, and Orange are the top three most diverse counties
-```
-
-
-```{r}
-
-library(dplyr)
-
-biodiversity_count <- biodiversity %>%
-  group_by(County) %>%
-  summarise(Unique_Species_Count = n_distinct(Scientific.Name))
-
-biodiversity_count <- biodiversity_count %>%
-  arrange(Unique_Species_Count)
-
-print(biodiversity_count)
-
-#This distribution shows biodiversity of counties from lowest bio diverse county to the highest
-```
-
-
-```{r only counties}
-
-biodiversity_count <- biodiversity %>%
-  group_by(County) %>%
-  summarise(Unique_Species_Count = n_distinct(Scientific.Name))
-
-biodiversity_count <- biodiversity_count %>%
-  arrange(Unique_Species_Count)
-
-non_county_entries <- c("Counties Unknown", "not listed", "Lake Erie Open Waters", 
-                        "Lake Ontario Open Waters", "Atlantic Ocean and Long Island Sound")
-
-biodiversity_count <- biodiversity_count %>%
-  filter(!(County %in% non_county_entries))
-
-print(biodiversity_count)
-
-
-#From here I will remove `Counties Unknown`, `not listed`,	`Lake Erie Open Waters`,	`Lake Ontario Open Waters`, `Atlantic Ocean`, and `Long Island Sound`, as they do not count as official counties.Based on this information, `New York`, `Montgomery`, and `Kings` counties rank with the lowest recorded biodiversity, with Houghton University's Allegany county not far behind them at the 7th lowest position.
-```
-
-
-```{r}
-
-library(ggplot2)
-
-biodiversity_count <- biodiversity %>%
-  group_by(County) %>%
-  summarise(Unique_Species_Count = n_distinct(Scientific.Name))
-
-biodiversity_count <- biodiversity_count %>%
-  arrange(Unique_Species_Count) %>%
-    filter(!(County %in% non_county_entries))
-
-
-ggplot(biodiversity_count, aes(x = reorder(County, Unique_Species_Count), y = Unique_Species_Count)) +
-  geom_histogram(stat = "identity", fill = "grey", width = 0.7) +
-  coord_flip() + 
-  labs(title = "Distribution of Biodiversity Across NYS Counties",
-       x = "County",
-       y = "Unique Species Count") +
-  theme_minimal()
-
-#Visualization of biodiversity distribution. Based on this information, Suffolk county contains the greatest variability of species by far compared to other counties.***
-
-```
-
-
-```{r}
-
-endangered_species <- biodiversity %>%
-  filter(NY.Listing.Status == "Endangered" | 
-           Federal.Listing.Status == "Endangered" |
-           State.Conservation.Rank == "S1")
-
-endangered_count <- endangered_species %>%
-  group_by(County) %>%
-  summarise(Endangered_Species_Count = n_distinct(Scientific.Name))
-
-endangered_count <- endangered_count %>%
-  arrange(desc(Endangered_Species_Count))
-
-print(endangered_count)
-#Based on this table, Suffolk, Richmond, and Nassau counties carry the most endangered species in NY. Interestingly Allegany county ranks 60th of counties with endangered species, carrying only 10.
-
-```
-
-
-```{r endangered-by-county}
-
-
-endangered_count <- endangered_count %>%
-  arrange(desc(Endangered_Species_Count))
-
-
-ggplot(endangered_count, aes(x = reorder(County, Endangered_Species_Count), 
-                             y = Endangered_Species_Count)) +
-  geom_bar(stat = "identity", fill = "pink", width = 0.7) +
-  coord_flip() +  
-  labs(title = "Endangered Species by County",
-       x = "County",
-       y = "Number of Endangered Species") +
-  theme_minimal()
-
-#visualization of endangered species by county.
 ```
 
 
