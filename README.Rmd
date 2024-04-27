@@ -6,21 +6,38 @@ output: github_document
 
 ## Summary
 
-Write-up of your project and findings go here. 
-Think of this as the text of your presentation. 
-The length should be roughly 5 minutes when read out loud.
-Although pacing varies, a 5-minute speech is roughly 750 words. 
-To use the word count addin, select the text you want to count the words of (probably this is the 
-Summary section of this document, go to Addins, and select the `Word count` addin).
-This addin counts words using two different algorithms, but the results should be similar and as long as you're in the ballpark of 750 words, you're good! 
-The addin will ignore code chunks and only count the words in prose.
+In this project, I wanted to focus on seeing how I could use R to determine biodiversity and distribution of wildlife present throughout all the New York state counties. As an environmental science major, I believe that this data could provide valuable information not just about how the plants and animals are fairing in different counties, but what this means on the greater scale of conservation.
 
-You can also load your data here and present any analysis results / plots, but I strongly urge you to keep that to a minimum (maybe only the most important graphic, if you have one you can choose). 
-And make sure to hide your code with  `echo = FALSE` unless the point you are trying to make is about the code itself.
-Your results with proper output and graphics go in your presentation, this space is for a brief summary of your project.
+For my data, I will be using a data set called `Biodiversity-by-County-Distribution-of-Animals-Plants-and-Natural-Communities`, which I found on Kaggle, but is originally from the New York State website at `Data.NY.gov`. This data contains `20017` observations, and `12` variables, which are categorized by `county`, `taxonomic group`, `scientific name`, `year last documented`, `NY listing status`, and more.
+
+Some of the main questions I focused on addressing for this dataset were: What is the variation of biodiversity between NYS counties? Which regions promote the most biodiversity? Do the ecosystems existing in certain counties affect what species live there? Do certain counties promote an incline or decline in biodiversity? To determine if these questions are true, there would need to be significant differences present in biodiversity within NYS counties, environmental factors driving variations in biodiversity and patterns of counties with similar biodiversity.
+
+The first thing I wanted to do was get a general understanding of which counties were the most and least biodiverse. To do this, I created a summary of all the unique species counted by using their scientific names, and then grouped them by counties in descending order. As a result from this, it turns out that Suffolk, Essex, and Orange counties are the top three most diverse counties in New York state. This makes sense as Suffolk is part of Long Island and surrounded by the Atlantic Ocean, while Essex is located near the Adirondacks, both of which are teaming with wildlife.
+
+The next observation I wanted to make was to see which counties had the lowest distribution of wildlife. To do this, I was able to reuse the same code as before but arrange in ascending order. From this, it was apparent that Counties Unknown, not listed,  
+
+Lake Erie Open Waters, Lake Ontario Open Waters,  Atlantic Ocean and Long Island Sound were the areas with the lowest distribution. This information was not very useful to me, so I filtered out these variables as non-county-entries so that only actual counties would appear. After doing this, New York, Montgomery, and Kings counties showed the lowest biodiversity. New York and Kings are known to be very urban areas, which explains why there might be so little wildlife. Interestingly enough, Houghton Univetsity’s home Allegany County is in the 7th lowest position, which is odd as it is a very rural area.
+
+Finally, I wanted to create two visualizations on my findings. For the first one, I decided to create a histogram that gave an accurate depiction of the biodiversity between counties. To make the histogram, I reused some of my previous code and labeled “unique species” for the x axis and “counties” for the y axis as this worked best. As you will see in both histograms, one major issue I had was that the names of the counties were bunching up, and I struggled to find any better fixes for this. But based on this visualization, it is clear that Suffolk County takes the lead with the most biodiversity by a long shot.
+
+For my second visualization, I wanted to explore which counties carried the most endangered species. Before I could do this, I created a table that filtered for endangered species from the “NYS Listing Status”, and the “Federal Listing Status”. Then, I grouped them by scientific name, and arranged them in descending order. Based on this table, Suffolk, Richmond, and Nassau counties carried the most endangered species. 
+
+Finally, I created my second histogram with this information in the same format as the previous histogram to get an idea of what the numbers looked like. Suffolk county surprisingly also contains the most endangered species.
+
+A few final notes on the process of this project are that it was difficult for me to answer the question of what factors specifically lead to there being higher or lower biodiversity, and more or fewer endangered species in these counties. I believe that this is because there were only variables that accounted for what animals lived in these counties, and not the types of biomes or ecosystems. 
+
+```{r echo = FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+
+```
+
+```{r}
+#Your results with proper output and graphics go in your presentation, this space is for a brief summary of your project.
+```
 
 
-```{r load-data, echo = FALSE}
+```{r load-data}
 # load data here, if you like
 
 library(tidyverse)
@@ -30,10 +47,10 @@ library(readr)
 
 biodiversity <- read.csv("/cloud/project/data/biodiversity-by-county-distribution-of-animals-plants-and-natural-communities-1.csv")
 
+
 ```
 
 
-***This shows the distribution of biodiversity by county from highest to lowest.***
 
 ```{r}
 library(dplyr)
@@ -46,13 +63,10 @@ biodiversity_count <- biodiversity_count %>%
   arrange(desc(Unique_Species_Count))
 
 print(biodiversity_count)
+
+#This shows the distribution of biodiversity by county from highest to lowest.Suffolk, Essex, and Orange are the top three most diverse counties
 ```
 
-***Suffox, Essex, and Orange are the top three most diverse counties.***
-
-
-
-***This distribution shows biodiversity of counties from lowest bio diverse county to the highest:***
 
 ```{r}
 
@@ -66,10 +80,10 @@ biodiversity_count <- biodiversity_count %>%
   arrange(Unique_Species_Count)
 
 print(biodiversity_count)
+
+#This distribution shows biodiversity of counties from lowest bio diverse county to the highest
 ```
 
-
-***From here I will remove `Counties Unknown`, `not listed`,	`Lake Erie Open Waters`,	`Lake Ontario Open Waters`, `Atlantic Ocean`, and `Long Island Sound`, as they do not count as official counties:***
 
 ```{r only counties}
 
@@ -87,12 +101,11 @@ biodiversity_count <- biodiversity_count %>%
   filter(!(County %in% non_county_entries))
 
 print(biodiversity_count)
+
+
+#From here I will remove `Counties Unknown`, `not listed`,	`Lake Erie Open Waters`,	`Lake Ontario Open Waters`, `Atlantic Ocean`, and `Long Island Sound`, as they do not count as official counties.Based on this information, `New York`, `Montgomery`, and `Kings` counties rank with the lowest recorded biodiversity, with Houghton University's Allegany county not far behind them at the 7th lowest position.
 ```
 
-***Based on this information, `New York`, `Montgomery`, and `Kings` counties rank with the lowest recorded biodiversity, with Houghton University's Allegany county not far behind them at the 7th lowest position.***
-
-
-Visualization of biodiversity distribution:
 
 ```{r}
 
@@ -103,25 +116,25 @@ biodiversity_count <- biodiversity %>%
   summarise(Unique_Species_Count = n_distinct(Scientific.Name))
 
 biodiversity_count <- biodiversity_count %>%
-  arrange(Unique_Species_Count)
+  arrange(Unique_Species_Count) %>%
+    filter(!(County %in% non_county_entries))
 
 
 ggplot(biodiversity_count, aes(x = reorder(County, Unique_Species_Count), y = Unique_Species_Count)) +
-  geom_histogram(stat = "identity", fill = "pink", width = 0.7) +
+  geom_histogram(stat = "identity", fill = "grey", width = 0.7) +
   coord_flip() + 
   labs(title = "Distribution of Biodiversity Across NYS Counties",
        x = "County",
        y = "Unique Species Count") +
   theme_minimal()
 
-
+#Visualization of biodiversity distribution. Based on this information, Suffolk county contains the greatest variability of species by far compared to other counties.***
 
 ```
 
-***Based on this information, Suffox county contains the greatest variability of species by far compared to other counties.***
-
 
 ```{r}
+
 endangered_species <- biodiversity %>%
   filter(NY.Listing.Status == "Endangered" | 
            Federal.Listing.Status == "Endangered" |
@@ -135,12 +148,10 @@ endangered_count <- endangered_count %>%
   arrange(desc(Endangered_Species_Count))
 
 print(endangered_count)
+#Based on this table, Suffolk, Richmond, and Nassau counties carry the most endangered species in NY. Interestingly Allegany county ranks 60th of counties with endangered species, carrying only 10.
+
 ```
 
-***Based on this table, Suffolk, Richmond, and Nassau counties carry the most endangered species in NY. Interestingly Allegany county ranks 60th of counties with endangered species, carrying only 10.***
-
-
-***Here is a visualization of endangered species by county:***
 
 ```{r endangered-by-county}
 
@@ -158,11 +169,8 @@ ggplot(endangered_count, aes(x = reorder(County, Endangered_Species_Count),
        y = "Number of Endangered Species") +
   theme_minimal()
 
-
+#visualization of endangered species by county.
 ```
-
-***This visualization gives a better idea of the distribution, and Suffolk appears to have more than double the amount of endangered species compared to other counties.***
-
 
 
 ## Presentation
@@ -171,11 +179,17 @@ My presentation can be found [here](presentation/presentation.html).
 
 ## Data 
 
-Include a citation for your data here. 
-See http://libraryguides.vu.edu.au/c.php?g=386501&p=4347840 for guidance on proper citation for datasets. 
-If you got your data off the web, make sure to note the retrieval date.
+Seren Smith, 10 Sept, 2019. "Biodiversity by County - Distribution of Animals, Plants and Natural Communities", https://www.kaggle.com/datasets/jennlsmith/biodiversity-by-county/data
+
+date accessed: 27 April, 2024
+
+
+New York State, 25 Feb, 2022. "Biodiversity by County - Distribution of Animals, Plants and Natural Communities", State of New York, https://data.ny.gov/Energy-Environment/Biodiversity-by-County-Distribution-of-Animals-Pla/tk82-7km5/about_data
+
+date accessed: 27 April, 2024
 
 ## References
 
-List any references here. You should, at a minimum, list your data source.
+https://www.kaggle.com/datasets/jennlsmith/biodiversity-by-county/data
 
+https://data.ny.gov/Energy-Environment/Biodiversity-by-County-Distribution-of-Animals-Pla/tk82-7km5/about_data
